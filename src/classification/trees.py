@@ -27,3 +27,19 @@ class InfoGain(Scene):
         self.play(self.entropyEq.animate.shift(UP * 1.5))
         self.play(Write(self.infoGainEq))
         self.wait()
+
+class GiniEquations(Scene):
+    def __init__(self):
+        super().__init__()
+        self.giniEq = MathTex(
+            r'\text{Gini} = 1 - \sum_{i=1}^n (p_i)^2'
+        )
+        self.explain = Text("Measure of impurity of set.").shift(DOWN)
+    
+    def construct(self):
+        self.wait(1.0)
+        self.play(Write(self.giniEq))
+        self.wait(5.0)
+        self.play(self.giniEq.animate.shift(UP))
+        self.play(Write(self.explain))
+        self.wait()
