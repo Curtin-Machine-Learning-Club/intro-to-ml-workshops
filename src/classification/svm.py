@@ -82,10 +82,8 @@ class NonLinearlySeparableData(Scene):
         points1 = circularData(20, 3, 5)
         points2 = circularData(20, 0.2, 2.5)
 
-        self.x1 = roundDownNearest(min(points2[:,0]), 1)
-        self.x2 = roundUpNearest(max(points2[:,0]), 1)
-        self.y1 = roundDownNearest(min(points2[:,1]), 1)
-        self.y2 = roundUpNearest(max(points2[:,1]), 1)
+        self.x1, self.x2 = -6, 6
+        self.y1, self.y2 = -6, 6
         self.ax = Axes(
             x_range=[self.x1, self.x2, 1], y_range=[self.y1, self.y2, 1], tips=False,
             x_axis_config={
@@ -112,6 +110,49 @@ class NonLinearlySeparableData(Scene):
         self.play(Create(self.dots))
         self.wait()
 
+class KernelTrick(ThreeDScene):
+    def __init__(self):
+        super().__init__()
+        points1 = circularData(20, 3, 5)
+        points2 = circularData(20, 0.2, 2.5)
+
+        self.x1, self.x2 = -6, 6
+        self.y1, self.y2 = -6, 6
+        self.ax = ThreeDAxes(
+            x_range=[self.x1, self.x2, 1], y_range=[self.y1, self.y2, 1],
+            z_range=[0, 5, 1],
+        )
+        dots = []
+
+        for pt1, pt2 in zip(points1, points2):
+            dot1 = Dot([self.ax.coords_to_point(pt1[0], pt1[1], pt1[2])], color=GREEN_C)
+            dot2 = Dot([self.ax.coords_to_point(pt2[0], pt2[1], pt2[2])], color=RED_C)
+            dots.extend([dot1, dot2])
+        
+        self.origDots = VGroup(*dots)
+
+        points1 = rbfFromCenter(points1, 1.0)
+        points2 = rbfFromCenter(points2, 1.0)
+        points1[:,2] = points1[:,2] * 3
+        points2[:,2] = points2[:,2] * 3
+        dots = []
+        for pt1, pt2 in zip(points1, points2):
+            self.co
+            dot1 = Dot([self.ax.coords_to_point(pt1[0], pt1[1], pt2[2])], color=GREEN_C)
+            dot2 = Dot([self.ax.coords_to_point(pt2[0], pt2[1], pt2[2])], color=RED_C)
+            dots.extend([dot1, dot2])
+        
+        self.newDots = VGroup(*dots)
+    
+    def construct(self):
+        self.set_camera_orientation(phi=60*DEGREES, theta=30*DEGREES)
+        self.add(self.ax)
+        self.wait()
+        self.play(Create(self.origDots))
+        self.wait(2.0)
+        self.play(ReplacementTransform(self.origDots, self.newDots))
+        self.wait()
+
 def roundDownNearest(num: float, div: int) -> int:
     return (num // div) * div
 
@@ -122,6 +163,14 @@ def roundUpNearest(num: float, div: int) -> int:
 def circularData(n: int, r1: float, r2: float) -> np.ndarray:
     mags = np.random.random(n) * (r2 - r1)
     X = mags * np.cos(2 * np.pi * np.random.random(n))
+    X = X.reshape(-1, 1)
     mags = np.random.random(n) * (r2 - r1)
     Y = mags * np.sin(2 * np.pi * np.random.random(n))
-    return np.concatenate((X, Y), axis=1)
+    Y = Y.reshape(-1, 1)
+    Z = np.zeros((n, 1))
+    return np.concatenate((X, Y, Z), axis=1)
+
+def rbfFromCenter(X: np.ndarray, std: float) -> np.ndarray:
+    mags = np.sqrt(X[:,0] ** 2 + X[:,1] ** 2)
+    X[:,2] = np.e(-mags / (2 * std * std))
+    return X
