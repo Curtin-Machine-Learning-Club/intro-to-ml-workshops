@@ -30,10 +30,14 @@ class LogisticRegression(Scene):
         self.plt = self.ax.plot(sigmoid, color=BLUE_C)
         self.constantPlt = self.ax.plot(lambda x: constant(x, 0.5), color=GREEN_C)
 
+        self.sigmoidEq = MathTex(r'y = \frac{1}{1 + e^{-(xw + b)}}').shift(RIGHT * 2 + DOWN)
+
     def construct(self):
         self.play(Create(self.ax), Create(self.labels))
         self.wait()
         self.play(Create(self.plt))
+        self.wait()
+        self.play(Write(self.sigmoidEq))
         self.wait()
         self.play(Create(self.constantPlt))
         self.wait()
