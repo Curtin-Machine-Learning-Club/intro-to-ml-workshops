@@ -14,15 +14,16 @@ class InfoGain(Scene):
     def __init__(self):
         super().__init__()
         self.entropyEq = MathTex(
-            r'Entropy = \sum -p_i \log_2(p_i)'
-        ).shift(UP)
+            r'\text{Entropy} = \sum -p_i \log_2(p_i)'
+        )
         self.infoGainEq = MathTex(
-            r'Information Gain = Entropy(parent) - \sum w_i Entropy(child_i)'
+            r'\text{Information Gain} = \text{Entropy}(\text{parent}) - \sum w_i \text{Entropy}(\text{child}_i)'
         ).shift(DOWN)
-    
+
     def construct(self):
         self.wait()
         self.play(Write(self.entropyEq))
-        self.wait(3.0)
+        self.wait(10.0)
+        self.play(self.entropyEq.animate.shift(UP * 1.5))
         self.play(Write(self.infoGainEq))
         self.wait()
