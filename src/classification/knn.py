@@ -41,7 +41,7 @@ class KNearestNeighbour(Scene):
 
         testDot = (0.7 * rng.random() * (max(self.X[:,0]) - min(self.X[:,0])) + min(self.X[:,0]),
                    0.7 * rng.random() * (max(self.X[:,1]) - min(self.X[:,1])) + min(self.X[:,1]))
-        self.testDot = Dot([self.ax.coords_to_point(testDot[0], testDot[1])], color=WHITE)
+        self.testDot = Dot([self.ax.coords_to_point(testDot[0], testDot[1])], color=WHITE, radius=0.15)
         
         distances = []
         for i in range(0, len(self.X[:,0]), 2):
@@ -69,7 +69,7 @@ class KNearestNeighbour(Scene):
     def construct(self):
         self.wait()
         self.play(Create(self.ax), Create(self.labels))
-        self.play(Create(self.trainDots))
+        self.play(Create(self.trainDots), run_time=3.0)
         self.wait()
         self.play(Create(self.testDot))
         self.wait()
