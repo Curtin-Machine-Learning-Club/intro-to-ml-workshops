@@ -34,19 +34,19 @@ class KNearestNeighbour(Scene):
         dots = []
         self.colors = (GREEN_C, BLUE_C, RED_C)
         for i in range(0, len(self.X[:,0]), 2):
-            dot = Dot([self.ax.coords_to_point(self.X[i, 0], self.X[i, 0])], color=self.colors[self.y[i]])
+            dot = Dot([self.ax.coords_to_point(self.X[i, 0], self.X[i, 1])], color=self.colors[self.y[i]])
             dots.append(dot)
         
         self.trainDots = VGroup(*dots)
 
-        testDot = (rng.random() * (max(self.X[:,0]) - min(self.X[:,0])),
-                   rng.random() * (max(self.X[:,1]) - min(self.X[:,1])))
+        testDot = (0.7 * rng.random() * (max(self.X[:,0]) - min(self.X[:,0])) + min(self.X[:,0]),
+                   0.7 * rng.random() * (max(self.X[:,1]) - min(self.X[:,1])) + min(self.X[:,1]))
         self.testDot = Dot([self.ax.coords_to_point(testDot[0], testDot[1])], color=WHITE)
         
         distances = []
         for i in range(0, len(self.X[:,0]), 2):
-            dist = np.sqrt((testDot[0] - self.X[i:0]) ** 2 + (testDot[1] - self.X[i:1]) ** 2)
-            distances.append((dist, self.X[i, 0], self.X[i: 1], self.y[i]))
+            dist = np.sqrt((testDot[0] - self.X[i,0]) ** 2 + (testDot[1] - self.X[i,1]) ** 2)
+            distances.append((dist, self.X[i, 0], self.X[i, 1], self.y[i]))
         
         distances.sort(key=lambda x: x[0])
         neighbours = distances[0:3]
@@ -64,7 +64,7 @@ class KNearestNeighbour(Scene):
         for neighbour in neighbours:
             counts[neighbour[3]] += 1
         
-        self.testColor = self.colors(counts.index(max(counts)))
+        self.testColor = self.colors[counts.index(max(counts))]
     
     def construct(self):
         self.wait()
